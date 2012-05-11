@@ -220,7 +220,11 @@
   if(!window.OEmbed) window.OEmbed = {};
   window.OEmbed._ = _;
 
+  //
+  // OEmbed.documentReady
+  //
   // Non-jQuery equivalent of the famous $(document).ready(cb)
+  //
   OEmbed.documentReady = function(cb) {
     if(document.addEventListener) {   // Mozilla, Opera, Webkit are all happy with this
       document.addEventListener("DOMContentLoaded", function() {
@@ -238,25 +242,22 @@
     }
   };
 
-}());
 
-
-////////////////////////////
-//
-// OEmbed implementation
-//
-(function() {
-
-  var OEmbed = window.OEmbed;
-  var _ = OEmbed._;
-
-  var debug = function() {
+  //
+  // OEmbed.debug
+  //
+  // Since oembed.js should die silently for incompatible browsers, we use this
+  // debug function to let the developer know what's going on.
+  OEmbed.debug = function() {
     console.debug.apply(null, arguments);
   };
 
-  ///////////////////////////
-
-  var XML = OEmbed.XML = {
+  //
+  // OEmbed.XML
+  //
+  // Cross-browser compatible XML parser
+  //
+  OEmbed.XML = {
     parse: function(str) {
       var xmlDoc = null;
 
@@ -275,14 +276,14 @@
     }
   };
 
-  ///////////////////////////
-  //
-  // XHR
-  // Object for making browser-independent XMLHttpRequests
-  //
 
-  var XHR = OEmbed.XHR = function() { };
-  _.extend(XHR.prototype, {
+  //
+  // OEmbed.XHR
+  //
+  // Cross-browser compatible XMLHttpRequest
+  //
+  OEmbed.XHR = function() { };
+  _.extend(OEmbed.XHR.prototype, {
     makeXHR: function() {
       var xhr = null;
 
@@ -325,13 +326,25 @@
   ////////////////////////
 
 
+}());
+
+
+////////////////////////////
+//
+// OEmbed implementation
+//
+(function() {
+
+  var OEmbed = window.OEmbed;
+  var _ = OEmbed._;
+  var debug = OEmbed.debug;
+
   var TYPES = [ 'photo', 'link', 'video', 'rich' ];
 
   ////////////////////////
   //
   // OEmbed object
   //
-
 
   var OEmbedElement = OEmbed.OEmbedElement = function(el) {
     this.el  = el;
@@ -360,7 +373,7 @@
 
       // We assume that provider allows all Origins
       // FIXME: provide fallback method through JSONP or eq. for XML
-      var xhr = new XHR();
+      var xhr = new OEmbed.XHR();
 
       xhr.get(this.src, {
         success: function(data, status, req) {
@@ -394,7 +407,7 @@
 
     _parseXml: function(data, req) {
       var obj = {},
-          xml = XML.parse(data);
+          xml = OEmbed.XML.parse(data);
 
       var oembed = xml.getElementsByTagName('oembed')[0];
       if(!oembed) return null;
@@ -435,6 +448,9 @@
         //     .html(template(data));
         //   return;
         // }
+
+        if(data.width) this.el.style['min-width'] = data.width;
+        if(data.height) this.el.style['min-height'] = data.height;
 
         this.el.innerHTML = template(data);
 
@@ -491,9 +507,9 @@
   // Default CSS for <oembed/> element
   var oembedCss = '\
     oembed { \
-        display: block; \
-        border: 1px solid black; \
+        display: inline-block; \
         padding: 10px; \
+        margin: 10px; \
     }\
   ';
 
