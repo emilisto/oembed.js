@@ -324,9 +324,20 @@
       }
 
       // TODO: add width and height of oembed element
-
       var template = OEmbed._templates[data.type];
       if(!template) return;
+
+      // FIXME: something iffy up here: doesn't work with ifixit.json but with
+      // slideshare.json ,something with the JavaScript not being executed.
+
+      // this.el.innerHTML = template(data);
+      // if(data.type === 'rich') {
+      //   $('<div/>')
+      //     .attr('id', 'ifixit')
+      //     .appendTo('#stuff')
+      //     .html(template(data));
+      //   return;
+      // }
 
       this.el.innerHTML = template(data);
     }
@@ -359,11 +370,11 @@
         <%= html %> \
       '),
       'link': _.template('\
-        <p>An embedded link <%= title %> from <%= provider_name %></p>\
+        <p>An embedded link "<%= title %>" from <%= provider_name %></p>\
         <a href="<%= url %>"><%= title %></a>\
       '),
       'rich': _.template('\
-        Coooooooooooooooool\
+        <p>Embedded rich content "<%= title %>" from <%= provider_name %></p>\
         <%= html %>\
       '),
 
@@ -386,7 +397,7 @@
 
   document.createElement('oembed');
 
-  // FIXME: remove jQuery dependency here
+  // TODO: remove all jQuery dependencies
   $(document).ready(function() {
     OEmbed.shivDocument();
   });
