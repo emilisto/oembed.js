@@ -18,14 +18,13 @@ unsure about this decision, either
 
 ## How it works
 
-When including the script it iterates over all oembed elements in the
-page and loads their resources.
+Upon including the script - it iterates over all `<oembed>` elements in the
+page and loads them from the specified URL.
 
 The idea of oEmbed is that the consumer can customize how embeds are
 shown - for example one might want to postpone the actual loading of
 embedded resources until the user choses to click it. With oEmbed one
 can provide a summary of the content before loading it.
-
 
 Therefore I came up with the neat idea of specifying how oEmbeds are
 rendered in the form of [underscore.js templates](http://documentcloud.github.com/underscore/#template).
@@ -33,8 +32,7 @@ rendered in the form of [underscore.js templates](http://documentcloud.github.co
 
 ## Still developing
 This is not even an alpha version as of yet. I just thought that in the
-true Github philosophy I'd publish the project while it's still beibg
-sketched out.
+true Github philosophy I'd publish the project while it's still born.
 
 ## Todo
   * fix embedding of content type `rich` - somehow the included scripts
@@ -42,8 +40,9 @@ sketched out.
   * check if browser supports unknown elements, if not, replace the
     `<oembeds>` with DIV's.
   * add default styles to `<oembed>`, e.g. `display: block`, etc.
-  * extend HTMLElement to create a completely custom DOM element
-  * way to bypass COR policy in case server doesn't add Access-Control-Allow-Origin
+  * way to bypass COR policy in case server doesn't add `Access-Control-Allow-Origin`
+
+  * extend `HTMLElement` to create a completely custom DOM element
   * Look into use/build on [html5shiv](https://github.com/aFarkas/html5shiv)
 
 ## Authors
