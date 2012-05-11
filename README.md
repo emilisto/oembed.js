@@ -13,9 +13,7 @@ Register custom representations for different types:
 	- rich
 
 ```
-registerHelper(type, helper);
+registerTemplate(type, helper);
 ```
 
-Where `helper` should be a function that takes as argument
-
-
+Look into using this html5shiv (https://github.com/aFarkas/html5shiv)

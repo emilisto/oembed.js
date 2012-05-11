@@ -3,16 +3,30 @@
 
 
     <script src="/jquery.js"></script>
-    <script src="/underscore.js"></script>
+    <!-- <script src="/underscore.js"></script>-->
     <script src="/oembed.js"></script>
+    <script>
+      /*OEmbed.registerTemplate('photo', '\
+        <h1>Header: <%= title %></h1> \
+        <img src="<%= url %>" alt="<%= title %>" /> \
+      ');*/
+    </script>
+
+    <style>
+      oembed {
+        display: block;
+        border: 1px solid black;
+        padding: 10px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Test!</h1>
 
-    <!--<embed src="/embed/embedee.html" height="500" width="500" type="text/html" />-->
-    <!-- <embed src="http://www.flickr.com/services/oembed?url=http://flickr.com/photos/bees/2362225867/" type="application/oembed" hidden="true" />-->
+    <!-- <oembed src="http://oembed.local.com/test/flickr.json"></oembed>-->
+    <!-- <oembed src="http://oembed.local.com/test/youtube.xml"></oembed>-->
+    <oembed src="http://oembed.local.com/test/polleverywhere.xml"></oembed>
+    <!-- <oembed src="http://api.embed.ly/1/oembed?url=http%3A//www.amazon.com/Myths-Innovation-Scott-Berkun/dp/0596527055/"></oembed>-->
 
-    <oembed src="http://oembed.local.com/test/test.json"></oembed>
-    <oembed src="http://oembed.local.com/test/test.xml"></oembed>
+
   </body>
 </html>

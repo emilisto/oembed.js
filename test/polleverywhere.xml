@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oembed>
+  <width type="integer">300</width>
+  <type>rich</type>
+  <provider-name>Poll Everywhere</provider-name>
+  <version>1.0</version>
+  <provider-url>http://www.polleverywhere.com/</provider-url>
+  <height type="integer">250</height>
+  <html>&lt;script language=&quot;javascript&quot; src=&quot;http://www.polleverywhere.com/multiple_choice_polls/LTIwNzM1NTczNTE/web.js?results_count_format=percent&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</html>
+</oembed>
