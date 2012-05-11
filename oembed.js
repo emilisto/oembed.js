@@ -11,6 +11,69 @@
 //    Emil Stenqvist <emsten@gmail.com>
 //
 
+///////////////////////////////
+//
+// We use some code from HTML5 Shiv (https://github.com/aFarkas/html5shiv) for
+// feature detection and stylesheet addition
+//
+;(function(window, document) {
+
+  if(!window.OEmbed) window.OEmbed = {};
+
+  /** Detect whether the browser supports unknown elements */
+
+  OEmbed.supportsUnknownElements = (function() {
+    var a = document.createElement('a');
+
+    a.innerHTML = '<xyz></xyz>';
+
+    var supportsUnknownElements = a.childNodes.length == 1 || (function() {
+      // assign a false positive if unable to shiv
+      try {
+        (document.createElement)('a');
+      } catch(e) {
+        return true;
+      }
+      var frag = document.createDocumentFragment();
+      return (
+        typeof frag.cloneNode == 'undefined' ||
+        typeof frag.createDocumentFragment == 'undefined' ||
+        typeof frag.createElement == 'undefined'
+      );
+    }());
+
+    return supportsUnknownElements;
+
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * Creates a style sheet with the given CSS text and adds it to the document.
+   * @private
+   * @param {Document} ownerDocument The document.
+   * @param {String} cssText The CSS text.
+   * @returns {StyleSheet} The style element.
+   */
+  OEmbed.addStyleSheet = function(ownerDocument, cssText) {
+    var p = ownerDocument.createElement('p'),
+        parent = ownerDocument.getElementsByTagName('head')[0] || ownerDocument.documentElement;
+
+    p.innerHTML = 'x<style>' + cssText + '</style>';
+    return parent.insertBefore(p.lastChild, parent.firstChild);
+  }
+
+  // TODO: use shivMethods as well to enable use of createElement('oembed')
+
+}(this, document));
+
+//
+// End of HTML5 inclusion
+//
+///////////////////////////////////
+
+
+
 /////////////////////////////////////////////////////////////
 //
 // We use a small subset of underscore.js.
@@ -22,7 +85,6 @@
 //     Oliver Steele's Functional, and John Resig's Micro-Templating.
 //     For all details and documentation:
 //     http://documentcloud.github.com/underscore
-
 
 (function() {
   var _ = {};
@@ -158,8 +220,31 @@
   if(!window.OEmbed) window.OEmbed = {};
   window.OEmbed._ = _;
 
+  // Non-jQuery equivalent of the famous $(document).ready(cb)
+  OEmbed.documentReady = function(cb) {
+    if(document.addEventListener) {   // Mozilla, Opera, Webkit are all happy with this
+      document.addEventListener("DOMContentLoaded", function() {
+        document.removeEventListener( "DOMContentLoaded", arguments.callee, false);
+        cb.call(document);
+      }, false);
+    }
+    else if(document.attachEvent) {   // IE is different...
+      document.attachEvent("onreadystatechange", function() {
+        if(document.readyState === "complete") {
+          document.detachEvent("onreadystatechange", arguments.callee);
+          cb.call(document);
+        }
+      });
+    }
+  };
+
 }());
 
+
+////////////////////////////
+//
+// OEmbed implementation
+//
 (function() {
 
   var OEmbed = window.OEmbed;
@@ -259,8 +344,14 @@
     el: null,
     src: null,
 
-    load: function() {
+    _load: function(cb) {
       var self = this;
+
+      // Use cached data if already loaded
+      if(this._oembedData) {
+        cb.call(this, this._oembedData);
+        return;
+      }
 
       if(!this.src) {
         debug('no src on element %o', this.el);
@@ -278,26 +369,30 @@
 
           switch(type) {
             case 'text/xml':
-              oembedData = self.parseXml(data, req);
+              oembedData = self._parseXml(data, req);
               break;
             case 'application/json':
-              oembedData = self.parseJson(data, req);
+              oembedData = self._parseJson(data, req);
               break;
           }
 
-          if(oembedData && self.validate(oembedData)) {
-            self.render(oembedData);
+          if(!self._validate(oembedData)) {
+            debug('unable to fetch data');
+            return;
           }
+
+          self._oembedData = oembedData;
+          cb.call(self, oembedData);
         }
       });
     },
 
     // TODO: add validation according to spec
-    validate: function(data) {
+    _validate: function(data) {
       return !!data;
     },
 
-    parseXml: function(data, req) {
+    _parseXml: function(data, req) {
       var obj = {},
           xml = XML.parse(data);
 
@@ -313,33 +408,37 @@
 
       return obj;
     },
-    parseJson: function(data, req) {
+    _parseJson: function(data, req) {
       return JSON.parse(data);
     },
 
-    render: function(data) {
-      if(TYPES.indexOf(data.type) < 0) {
-        debug('no such type: ' + data.type);
-        return;
-      }
+    render: function() {
 
-      // TODO: add width and height of oembed element
-      var template = OEmbed._templates[data.type];
-      if(!template) return;
+      this._load(function(data) {
+        if(TYPES.indexOf(data.type) < 0) {
+          debug('no such type: ' + data.type);
+          return;
+        }
 
-      // FIXME: something iffy up here: doesn't work with ifixit.json but with
-      // slideshare.json ,something with the JavaScript not being executed.
+        // TODO: add width and height of oembed element
+        var template = OEmbed._templates[data.type];
+        if(!template) return;
 
-      // this.el.innerHTML = template(data);
-      // if(data.type === 'rich') {
-      //   $('<div/>')
-      //     .attr('id', 'ifixit')
-      //     .appendTo('#stuff')
-      //     .html(template(data));
-      //   return;
-      // }
+        // FIXME: something iffy up here: doesn't work with ifixit.json but with
+        // slideshare.json ,something with the JavaScript not being executed.
 
-      this.el.innerHTML = template(data);
+        // this.el.innerHTML = template(data);
+        // if(data.type === 'rich') {
+        //   $('<div/>')
+        //     .attr('id', 'ifixit')
+        //     .appendTo('#stuff')
+        //     .html(template(data));
+        //   return;
+        // }
+
+        this.el.innerHTML = template(data);
+
+      });
     }
 
   });
@@ -354,7 +453,7 @@
           if(!el.oembed) el.oembed = new OEmbedElement(el);
 
           // FIXME: refactor so data is not loaded again
-          el.oembed.load();
+          el.oembed.render();
         }
       }
     },
@@ -389,23 +488,34 @@
 
   });
 
+  // Default CSS for <oembed/> element
+  var oembedCss = '\
+    oembed { \
+        display: block; \
+        border: 1px solid black; \
+        padding: 10px; \
+    }\
+  ';
+
 
   /////////////////////////////
   //
   // Bootstrapping: Load all oembed elements
   //
 
+  // TODO: make OEmbed work even for browsers that don't support custom elements
+  if(!OEmbed.supportsUnknownElements) {
+    debug('browser does not support custom elements');
+    return;
+  }
+
   document.createElement('oembed');
 
-  // TODO: remove all jQuery dependencies
-  $(document).ready(function() {
+  OEmbed.documentReady(function() {
+
+    OEmbed.addStyleSheet(document, oembedCss);
     OEmbed.shivDocument();
+
   });
-
-  // TODO: check if browser supports unknown elements
-  // TODO: add default styles, e.g. `display: block`, etc.
-  // TODO: extend HTMLElement to create a completely custom DOM element
-  // TODO: way to bypass COR policy in case server doesn't add Access-Control-Allow-Origin
-
 
 }());
