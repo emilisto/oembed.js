@@ -476,21 +476,22 @@
 
     _templates: {
       'photo': _.template('\
-        <h1><%= title %></h1> \
-        <p>An embedded photo "<%= title %>" from <%= provider_name %></p>\
-        <img width="<%= width %>" height="<%= height %>" src="<%= url %>" alt="<%= title %>" /> \
+        <div>\
+          <img width="<%= width %>" height="<%= height %>" src="<%= url %>" alt="<%= title %>" /> \
+          <p style="text-align: center;">An embedded photo "<%= title %>" from <a href="#"><%= provider_name %></a></p>\
+        </div>\
       '),
       'video': _.template('\
-        <p>An embedded video "<%= title %>" from <%= provider_name %></p>\
-        <%= html %> \
+        <p>Embedded video "<%= title %>" from <%= provider_name %></p>\
+        <div class="oembed-content"><%= html %></div>\
       '),
       'link': _.template('\
         <p>An embedded link "<%= title %>" from <%= provider_name %></p>\
         <a href="<%= url %>"><%= title %></a>\
       '),
       'rich': _.template('\
-        <p>Embedded rich content "<%= title %>" from <%= provider_name %></p>\
-        <%= html %>\
+        <p class="oembed-descr">Embedded content from <a href="<%= provider_url %>"><%= provider_name %></a></p>\
+        <div class="oembed-content"><%= html %></oembed>\
       '),
 
     },
@@ -510,6 +511,22 @@
         display: inline-block; \
         padding: 10px; \
         margin: 10px; \
+    }\
+    oembed p.oembed-descr { \
+        font-size: 13px; \
+        border-bottom: 1px solid #aaa; \
+        text-color: #555; \
+    }\
+    oembed p.oembed-descr a, oembed p.oembed-descr a:active, oembed p.oembed-descr a:visited { \
+        color: #555; \
+        font-weight: 600;\
+        text-decoration: none;\
+    }\
+    oembed p.oembed-descr a:hover { \
+        color: #000; \
+    }\
+    oembed .oembed-content { \
+        margin-left: 10px; \
     }\
   ';
 
