@@ -29,6 +29,14 @@ can provide a summary of the content before loading it.
 Therefore I came up with the neat idea of specifying how oEmbeds are
 rendered in the form of [underscore.js templates](http://documentcloud.github.com/underscore/#template).
 
+## CORS policies
+As of today there's no solution to embedding material from a provider that does not have the
+embedding site's domain covered by its `Access-Control-Allow-Origin`.
+
+One could use JSONP but the oEmbed standard only supports `xml` and `json`.
+
+We simply expect sites to have `Access-Control-Allow-Origin` set properly. All sites ought to look
+into this - with the web becoming more cross referenced, this is an issue. See http://enable-cors.org/.
 
 ## Still developing
 This is not even an alpha version as of yet. I just thought that in the
@@ -39,11 +47,11 @@ true Github philosophy I'd publish the project while it's still born.
     don't get executed properly.
   * check if browser supports unknown elements, if not, replace the
     `<oembeds>` with DIV's.
-  * add default styles to `<oembed>`, e.g. `display: block`, etc.
-  * way to bypass COR policy in case server doesn't add `Access-Control-Allow-Origin`
-
-  * extend `HTMLElement` to create a completely custom DOM element
   * Look into use/build on [html5shiv](https://github.com/aFarkas/html5shiv)
+  * Do cross-browser testing, and make sure silent dying works for really old ones.
+
+  * ~~way to bypass COR policy in case server doesn't add `Access-Control-Allow-Origin`~~
+    There's real way around this, see CORS policies above.
 
 ## Authors
 - Emil Stenqvist, @emilisto
