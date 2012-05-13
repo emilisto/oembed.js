@@ -43,13 +43,13 @@ This is not even an alpha version as of yet. I just thought that in the
 true Github philosophy I'd publish the project while it's still born.
 
 ## Todo
+  * Support for `jsonp`
+  * Do cross-browser testing, and make sure silent dying works for really old ones.
+  * Check if browser supports unknown elements, if not, replace the
+    `<oembeds>` with DIV's.
+  * Look into using/building on [html5shiv](https://github.com/aFarkas/html5shiv)
   * fix embedding of content type `rich` - somehow the included scripts
     don't get executed properly.
-  * check if browser supports unknown elements, if not, replace the
-    `<oembeds>` with DIV's.
-  * Look into use/build on [html5shiv](https://github.com/aFarkas/html5shiv)
-  * Do cross-browser testing, and make sure silent dying works for really old ones.
-
   * ~~way to bypass COR policy in case server doesn't add `Access-Control-Allow-Origin`~~
     There's real way around this, see CORS policies above.
 

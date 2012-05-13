@@ -476,18 +476,16 @@
 
     _templates: {
       'photo': _.template('\
-        <div>\
-          <img width="<%= width %>" height="<%= height %>" src="<%= url %>" alt="<%= title %>" /> \
-          <p style="text-align: center;">An embedded photo "<%= title %>" from <a href="#"><%= provider_name %></a></p>\
-        </div>\
+        <p class="oembed-descr">An embedded photo from <a href="<%= provider_url %>"><%= provider_name %></a></p>\
+        <div class="oembed-content"><img width="<%= width %>" height="<%= height %>" src="<%= url %>" alt="<%= title %>" /></div> \
       '),
       'video': _.template('\
-        <p>Embedded video "<%= title %>" from <%= provider_name %></p>\
+        <p class="oembed-descr">Embedded video from <a href="<%= provider_url %>"><%= provider_name %></a></p>\
         <div class="oembed-content"><%= html %></div>\
       '),
       'link': _.template('\
-        <p>An embedded link "<%= title %>" from <%= provider_name %></p>\
-        <a href="<%= url %>"><%= title %></a>\
+        <p class="oembed-descr">An embedded link from <a href="<%= provider_url %>"><%= provider_name %></a></p>\
+        <div class="oembed-content"><a href="<%= url %>"><%= title %></a></div>\
       '),
       'rich': _.template('\
         <p class="oembed-descr">Embedded content from <a href="<%= provider_url %>"><%= provider_name %></a></p>\
